@@ -1,5 +1,5 @@
 const User = require('../models/user')
-module.exports= class user{
+module.exports=  class user{
     constructor(){
 
     }
@@ -11,6 +11,23 @@ module.exports= class user{
     }
     static save(user){
       User.create(user)
+    }
+    static save(user){
+      User.create(user)
+    }
+    static edit(_id){
+      return new Promise((resolve, reject)=>{
+        const user = User.findOne({where:{id:_id}})
+        user ==null ? console.log('not found'): resolve(user)
+      })
+    }
+    static async update_now(id){
+      // User.update(
+      //   { where: { id: _id} }
+      // )
+      await User.update({ userName: "Doe" },{
+        where: { id: id}
+      }).then(function() {})
     }
 }
     

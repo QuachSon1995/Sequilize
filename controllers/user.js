@@ -25,12 +25,18 @@ exports.findAll = (req, res) => {
   
 };
 // Find a single User with an id
-exports.findOne = (req, res) => {
-  
+exports.findOne = async(req, res) => {
+  const id = req.params.id
+  console.log(id)
+  const user = await User.edit(id)
+  console.log(user)
 };
 // Update a User by the id in the request
-exports.update = (req, res) => {
-  
+exports.update = async(req, res) => {
+  const id = req.params.id
+  console.log(id)
+  const user=await User.update_now(id)
+  console.log(user)
 };
 // Delete a User with the specified id in the request
 exports.delete = (req, res) => {
