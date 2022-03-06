@@ -13,8 +13,8 @@ const db = require("./config/db");
 db.sync().then(() => {
     console.log("Connect mysql success");
 });
-const user = require('./routes/user');
-app.use("/api/user", user);
+const account = require('./routes/account');
+app.use("/api/v1/account", account);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server running at ${process.env.PORT}`);
