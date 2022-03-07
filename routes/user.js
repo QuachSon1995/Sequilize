@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const User_controller = require("../controllers/user");
-
-
+const auth = require('../middleware/user')
+// Create a new Tutorial
+router.post("/login", User_controller.login);
+// Create a new Tutorial
+router.post("/signup", User_controller.signup);
 // Create a new Tutorial
 router.post("/", User_controller.add);
 // Retrieve all User_controller
@@ -17,5 +20,9 @@ router.put("/:id", User_controller.update);
 router.delete("/:id", User_controller.delete);
 // Delete all User_controller
 router.delete("/", User_controller.deleteAll);
+
+router.post("/welcome", auth.verifyToken, (req, res) => {
+    res.status(200).send("Welcome 🙌 ");
+});
 
 module.exports = router;

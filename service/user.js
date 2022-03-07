@@ -1,3 +1,4 @@
+
 const User = require('../models/user')
 module.exports=  class user{
     constructor(){
@@ -28,6 +29,12 @@ module.exports=  class user{
       await User.update({ userName: "Doe" },{
         where: { id: id}
       }).then(function() {})
+    }
+    static getEmail(email){
+      return new Promise((resolve, reject)=>{
+        const user = User.findOne({where:{email:email}})
+        user ==null ? console.log('not found'): resolve(user)
+      })
     }
 }
     
