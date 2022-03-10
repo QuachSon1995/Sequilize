@@ -16,6 +16,12 @@ db.sync().then(() => {
 const account = require('./routes/account');
 app.use("/api/v1/account", account);
 
+const category = require('./routes/category');
+app.use("/api/v1/category", category);
+
+// const brand = require('./routes/brand');
+// app.use("/api/v1/brand", brand);
+
 app.listen(process.env.PORT, () => {
     console.log(`Server running at ${process.env.PORT}`);
 });

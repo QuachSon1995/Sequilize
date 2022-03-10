@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const User_controller = require("../controllers/account");
 
+// Refresh Token
+router.post("/refreshToken", User_controller.refreshToken);
 // Create a new Tutorial
 router.post("/login", User_controller.login);
 // Create a new Tutorial

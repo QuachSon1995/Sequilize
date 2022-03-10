@@ -1,19 +1,56 @@
 const db = require("../config/db");
 const User = require("../service/account")
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
+const { authenToken } = require("../middleware/authorization");
 
+// refresh Token
+exports.refreshToken = async (req, res) => {
+  const refreshTokens="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTY0NjY2NzU3N30.fc_pQt8_C8fSspA-37nZ4RVBzCNybyEUK8jjVFHCRU8"
+  const refreshToken = req.body.token;
+  if (!refreshToken) res.sendStatus(401);
+  if (!refreshTokens.includes(refreshToken)) res.sendStatus(403);
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_TOKEN_SECRET, (err, data) => {
+    console.log(err, data)
+    if (err) res.sendStatus(403);
+    const accessToken =jwt.sign({user_id: data.user._id,email: data.email}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'30s'})
+    res.json({accessToken})
+  })
+}
 // Login 
 exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body
+    if (!(email && password)) return res.status(400).json({ message: "Email password cannot be blank" })
+    else {
+      const user = await User.findOne(email);
+      if (user && (await bcrypt.compare(password, user.password))) {
+        const token = jwt.sign(
+          { user_id: user._id, email },
+          process.env.ACCESS_TOKEN_SECRET,
+          {
+            expiresIn: "2h",
+          })
+        const refreshToken = jwt.sign({ user_id: user._id, email }, process.env.REFRESH_TOKEN_SECRET)
+        // save user token
+        user.token = token;
 
+        // user
+        res.status(200).json({ user, token, refreshToken });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 // Create and Save a new User
-exports.register = async (req, res) => {
+exports.register = authenToken, async (req, res) => {
   // Validate request
-  const password = bcrypt.hashSync(req.body.password, 10);
+  const hashPassword = bcrypt.hashSync(req.body.password, 10);
   const userName = req.body.userName
   const email = req.body.email
   const address = req.body.address
-  
+
   const check_email = await User.findOne(email)
 
   if (!email || !password) return res.status(400).json({ message: "Email password cannot be blank" })
